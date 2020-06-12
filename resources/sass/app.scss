@@ -1,0 +1,16 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+body{
+    text-align: center;
+}
+.row{
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+    
+}
