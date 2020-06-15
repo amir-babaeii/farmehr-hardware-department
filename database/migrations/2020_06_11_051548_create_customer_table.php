@@ -17,19 +17,22 @@ class CreateCustomerTable extends Migration
             $table->id();
             $table->string("name");
             $table->string("phone");
-            $table->string("type");
-            $table->string("model");
-            $table->string("serie");
-            $table->integer("amval_num");
-            $table->string("accessories");
-            $table->text("other_information");
-            $table->text("address");
-            $table->timestamp("get_date");
-            $table->integer("getter_id");
-            $table->string("truble");
-            $table->text("repair_information");
-            $table->integer("giver_id");
-            $table->timestamp("out_date");
+            $table->string("type")->nullable();
+            $table->string("model")->nullable();
+            $table->string("serie")->nullable();
+            $table->integer("amval_num")->nullable();
+            $table->string("accessories")->nullable();
+            $table->text("other_information")->nullable();
+            $table->text("address")->nullable();
+            $table->timestamp("get_date")->nullable();
+            $table->integer("getter_id")->nullable();
+            $table->string("truble")->nullable();
+            $table->text("repair_information")->nullable();
+            $table->integer("giver_id")->nullable();
+            $table->timestamp("out_date")->nullable();
+            $table->tinyInteger("situation")->default(0);
+            $table->string("situation_text")->nullable();
+
             $table->timestamps();
         });
     }
