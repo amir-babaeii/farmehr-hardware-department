@@ -188,6 +188,10 @@ class CMSController extends Controller
     public function showEdit($id,Request $r){
         $customer = Customer::find($id);
         // dd($customer->id);
+        $editable = false;
+        if($customer->giver_id===0 || auth()->user()->username === 'admin'){
+            $editable = true;
+        }
         $customer->giver_name= (User::find($customer->giver_id) !=null )? User::find($customer->giver_id)->fullname : "نامی ثبت نشده است.";
         $customer->getter_name = (User::find($customer->getter_id) !=null )? User::find($customer->getter_id)->fullname : "نامی ثبت نشده است.";
         if(strpos($customer->accessories,'charger') !==false){
@@ -229,10 +233,13 @@ class CMSController extends Controller
                 $customer->situation_name = "تحویل گرفته شده";
                 break;
         }
-        return view('cms.edit')->with(['data'=>$customer,'route' => 'manage']);
+        return view('cms.edit')->with(['data'=>$customer,'route' => 'manage','editable' => $editable]);
     }
 
-
+    public function showDashboard()
+    {
+        return "این صفحه فعلا در دسترس نمی باشد.";
+    }
 
     public function changeSituation(Request $r){
         

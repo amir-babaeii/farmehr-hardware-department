@@ -12,9 +12,11 @@
         <th scope="col">نام تحویل گیرنده</th>
         <th scope="col">تاریخ تحویل</th>
         <th scope="col">وضعیت تعمیر</th>
-        <th scope="col">ویرایش</th>
+        <th scope="col">{{($route === 'manage') ? "ویرایش" : "پرینت"}}</th>
+        @if($route === 'manage')
         <th scope="col">گزارش تعمیر</th>
         <th scope="col">تحویل</th>
+        @endif
       </tr>
     </thead>
     <tbody>
@@ -27,10 +29,13 @@
                 <td>{{ $item->getter_name}}</td>
                 <td>{{ $item->get_date}}</td>
                 <td>{{ $item->situation_name}}</td>
-                <td><a href="/edit/{{ $item->id}}"><i class="fa fa-edit text-primary" style="font-size: 30px;"></i></a></td> 
-                <td><a href="#"><i class="fa fa-wrench text-primary" data-toggle="modal" data-target="#d-{{ $item->id}}" style="font-size: 30px;"></i></a></td> 
-                <td><a href="#"><i class="fa fa-check text-primary" data-toggle="modal" data-target="#dd-{{ $item->id}}" style="font-size: 30px;"></i></a></td> 
+            <td><a href="/edit/{{ $item->id}}"><i class="fa {{($route === "archive") ? "fa-print" : "fa-edit"}} text-primary" style="font-size: 30px;"></i></a></td> 
+            @if($route === 'manage') 
+                    <td><a href="#"><i class="fa fa-wrench text-primary" data-toggle="modal" data-target="#d-{{ $item->id}}" style="font-size: 30px;"></i></a></td> 
+                   <td><a href="#"><i class="fa fa-check text-primary" data-toggle="modal" data-target="#dd-{{ $item->id}}" style="font-size: 30px;"></i></a></td> 
+            @endif
             </tr>
+            @if($route === 'manage')
             <div class="modal fade" id="d-{{ $item->id}}" tabindex="-1" role="dialog" dir="rtl">
                 <div class="modal-dialog" role="document">
                 <form method="POST" action="{{ route('changeSituation')}}" >
@@ -73,6 +78,7 @@
                 </form>
                 </div>
               </div>
+              
               <div class="modal fade" id="dd-{{ $item->id}}" tabindex="-1" role="dialog" dir="rtl">
                 <div class="modal-dialog" role="document">
                 <form method="POST" action="{{ route('exit')}}" >
@@ -99,6 +105,7 @@
                 </form>
                 </div>
               </div>
+              @endif
           @endforeach
 
      

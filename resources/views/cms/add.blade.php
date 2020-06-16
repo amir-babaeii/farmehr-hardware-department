@@ -89,24 +89,24 @@
                             <div class="form-group row col-lg-6 ">
                                 <label for="accessories" class="col-lg-3 col-form-label text-md-right">تجهیزات جانبی</label>
 
-                                <div class="col-lg-9">
-                                    <div class="input-group mb-3">
-                                        <input type="checkbox" name="charger" aria-label="Checkbox for following text input">
+                                <div class="col-lg-9 row">
+                                    <div class="input-group mb-3 col-6">
+                                        <input type="checkbox"  name="charger" aria-label="Checkbox for following text input">
                                         <i class="mr-2">شارژر</i>
                                     </div>
-                                    <div class="input-group mb-3">
+                                    <div class="input-group mb-3 col-6">
                                         <input type="checkbox" name="bag" aria-label="Checkbox for following text input">
                                         <i class="mr-2">کیف</i>
                                     </div>
-                                    <div class="input-group mb-3">
+                                    <div class="input-group mb-3 col-6">
                                         <input type="checkbox" name="dvd" aria-label="Checkbox for following text input">
                                         <i class="mr-2">دی وی دی</i>
                                     </div>
-                                    <div class="input-group mb-3">
+                                    <div class="input-group mb-3 col-6">
                                         <input type="checkbox" name="monitor" aria-label="Checkbox for following text input">
                                         <i class="mr-2">مانیتور</i>
                                     </div>
-                                    <div class="input-group mb-3">
+                                    <div class="input-group mb-3 col-6">
                                         <input type="checkbox" name="printer" aria-label="Checkbox for following text input">
                                         <i class="mr-2">پرینتر</i>
                                     </div>
