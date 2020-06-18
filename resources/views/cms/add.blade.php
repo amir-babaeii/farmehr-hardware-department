@@ -164,7 +164,7 @@
 
                         var divContents1 = document.getElementById("id").outerHTML; 
                         var divContents2 = document.getElementById("name").value; 
-                        var a = window.open('', '', 'height=750, width=500'); 
+                        var a = window.open('', '', 'height=4, width=2'); 
                         a.document.write('<html>'); 
                         a.document.write('<body dir="rtl"> <h1 class="text-center" style="margin-right:35%">فرمهر رایانه<br>'); 
                         a.document.write('<lable>شناسه دستگاه : ' + divContents1 + '</lable><br>'); 
