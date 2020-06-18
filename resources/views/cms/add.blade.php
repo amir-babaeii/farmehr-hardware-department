@@ -80,7 +80,7 @@
                         <div class="row py-3">
 
                             <div class="form-group row col-lg-6 ">
-                                <label for="truble" class="col-lg-4 col-form-label text-md-right ">اطلاعات خرابی</label>
+                                <label for="truble" class="col-lg-4 col-form-label text-md-right ">اشکال ذکر شده توسط صاحب دستگاه</label>
 
                                 <div class="col-lg-8">
                                     <textarea id="truble" class="form-control @error('truble') is-invalid @enderror" name="truble" value="{{ old('truble') }}"  autocomplete="truble" autofocus></textarea>
@@ -89,24 +89,24 @@
                             <div class="form-group row col-lg-6 ">
                                 <label for="accessories" class="col-lg-3 col-form-label text-md-right">تجهیزات جانبی</label>
 
-                                <div class="col-lg-9">
-                                    <div class="input-group mb-3">
-                                        <input type="checkbox" name="charger" aria-label="Checkbox for following text input">
+                                <div class="col-lg-9 row">
+                                    <div class="input-group mb-3 col-6">
+                                        <input type="checkbox"  name="charger" aria-label="Checkbox for following text input">
                                         <i class="mr-2">شارژر</i>
                                     </div>
-                                    <div class="input-group mb-3">
+                                    <div class="input-group mb-3 col-6">
                                         <input type="checkbox" name="bag" aria-label="Checkbox for following text input">
                                         <i class="mr-2">کیف</i>
                                     </div>
-                                    <div class="input-group mb-3">
+                                    <div class="input-group mb-3 col-6">
                                         <input type="checkbox" name="dvd" aria-label="Checkbox for following text input">
                                         <i class="mr-2">دی وی دی</i>
                                     </div>
-                                    <div class="input-group mb-3">
+                                    <div class="input-group mb-3 col-6">
                                         <input type="checkbox" name="monitor" aria-label="Checkbox for following text input">
                                         <i class="mr-2">مانیتور</i>
                                     </div>
-                                    <div class="input-group mb-3">
+                                    <div class="input-group mb-3 col-6">
                                         <input type="checkbox" name="printer" aria-label="Checkbox for following text input">
                                         <i class="mr-2">پرینتر</i>
                                     </div>
@@ -156,10 +156,22 @@
                   
 
                 </div>
-                <script> 
-                function btn(){
+                <style>
 
-                }
+
+                    @media print and (width: 80mm) and (height: 150mm) {
+                        @page {
+                        margin: 3cm;
+                        }
+                    }
+                    @page {
+                        size: 150mm 80mm  ;
+                        margin: 10%;
+                       
+                    }
+                </style>
+                <script> 
+
                     function printDiv() { 
 
                         var divContents1 = document.getElementById("id").outerHTML; 

@@ -65860,8 +65860,8 @@ if (document.getElementById('example')) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\admin\Desktop\farmehr\farmehrautomation\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\Users\admin\Desktop\farmehr\farmehrautomation\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Users\admin\Desktop\farmehr\farmehr-hardware-department\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Users\admin\Desktop\farmehr\farmehr-hardware-department\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
