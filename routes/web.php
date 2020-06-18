@@ -27,6 +27,7 @@ Route::get('/archive', 'CMSController@showArchive')->name('archive');
 Route::get('/dashboard', 'CMSController@showDashboard')->name('dashboard');
 Route::get('/edit/{id}', 'CMSController@showEdit');
 Route::post('/edit/{id}', 'CMSController@edit')->name('edit');
+Route::get('/search', 'CMSController@search')->name('search');
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', function () {
         return redirect()->route('manage');

@@ -145,7 +145,7 @@ class CMSController extends Controller
         }
         // dd($customers);
 
-        return view('cms.manage')->with(['data'=>$customers,'route' => 'manage']);
+        return view('cms.manage')->with(['data'=>$customers->items(),'route' => 'manage']);
     }
     
     public function showArchive(){
@@ -180,7 +180,7 @@ class CMSController extends Controller
                 $customer->getter_name = User::find($customer->getter_id)->fullname;
             }
         }
-        return view('cms.manage')->with(['data'=>$customers,'route' => 'archive']);
+        return view('cms.manage')->with(['data'=>$customers->items(),'route' => 'archive']);
     }
 
 
@@ -241,7 +241,65 @@ class CMSController extends Controller
         return "این صفحه فعلا در دسترس نمی باشد.";
     }
 
+    public function search(Request $r)
+    {
+        $r->validate([
+            'search' => 'max:100',
+        ]);
+        
+        if(is_numeric($r->search)){
+            if(($customer = Customer::find($r->search))->select(['id','name','type','model','get_date','situation_text','situation','getter_id','giver_id']) !== null)
+                $customers = [$customer];
+        
+        }else{
+            if(($customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id','giver_id'])->where('name','like','%'. $r->search . '%')->paginate(10) ) !== null)
+                $customers =$customers->items();
+
+        }
+        foreach ($customers as $key => $customer) {
+            switch ($customer->situation) {
+                case 0:
+                    # code...
+                    $customer->situation_name = "تحویل گرفته شده است";
+                    break;
+                case 1:
+                    # code...
+                    $customer->situation_name = "تعمیر شده است";
+                    break;
+                case 2:
+                    # code...
+                    $customer->situation_name = "تعمیر نشده است";
+                    break;
+                case 3:
+                    # code...
+                    $customer->situation_name = "در حال تعمیر";
+                    break;
+    
+                            
+                default:
+                    # code...
+                    $customer->situation_name = "تحویل گرفته شده";
+                    break;
+            }
+            if(User::find($customer->getter_id) !==null){
+                $customer->getter_name = User::find($customer->getter_id)->fullname;
+            }
+        }
+        return view('cms.manage')->with(['data'=>$customers,'route' => 'manage']);
+        
+    }
+
+
+
+
     public function changeSituation(Request $r){
+        $r->validate([
+            'situation' => 'integer|nullable|max:4',
+            'situayion_text' => 'string|nullable|max:255',
+
+
+            
+        ]);
         
         $customer = Customer::find($r->id);
         $customer->situation = $r->situation;
@@ -253,10 +311,15 @@ class CMSController extends Controller
 
     public function exit(Request $r){
         $date = new DateTime();
+
         $customer = Customer::find($r->id);
+
         $customer->giver_id=auth()->user()->id;
         $customer->out_date = $date->format('Y-m-d H:i:s');
+
         $customer->save();
+
+
         return redirect('/manage');
         // $customer->situation
     }

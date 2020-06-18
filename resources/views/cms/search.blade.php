@@ -9,10 +9,10 @@
         <th scope="col">نام و نام خانودگی</th>
         <th scope="col">نوع دستگاه</th>
         <th scope="col">مدل دستگاه</th>
-        <th scope="col">تحویل گیرنده</th>
+        <th scope="col">نام تحویل گیرنده</th>
         <th scope="col">تاریخ تحویل</th>
-        <th scope="col">وضعیت </th>
-        <th scope="col">{{($route === 'manage') ? "ویرایش/پرینت" : "پرینت"}}</th>
+        <th scope="col">وضعیت تعمیر</th>
+        <th scope="col">{{($route === 'manage') ? "ویرایش" : "پرینت"}}</th>
         @if($route === 'manage')
         <th scope="col">گزارش تعمیر</th>
         <th scope="col">تحویل</th>
@@ -20,6 +20,11 @@
       </tr>
     </thead>
     <tbody>
+        @if(!is_array($data))
+        @php
+        $data = [$data];
+        @endphp
+        @endif
 
           @foreach ($data as $item)
             <tr>
@@ -30,18 +35,13 @@
                 <td>{{ $item->getter_name}}</td>
                 <td>{{ $item->get_date}}</td>
                 <td>{{ $item->situation_name}}</td>
-            <td><a href="/edit/{{ $item->id}}"><i class="fa {{($route === "archive" || $item->giver_id != 0) ? "fa-print" : "fa-edit"}} text-primary" style="font-size: 30px;"></i></a></td> 
-            @if($route === 'manage' )
-                @if( $item->giver_id == 0)
-                    <td><a href="#" ><i class="fa fa-wrench text-primary"  data-toggle="modal" data-target="#d-{{ $item->id}}" style="font-size: 30px;"></i></a></td> 
-                   <td><a href="#"><i class="fa fa-check text-primary" style="font-size: 30px;"></i></a></td> 
-                @else
-                    <td><a href="#" ><i class="fa fa-exclamation-circle text-dark" onclick="alert('این دستگاه آرشیوی است و قابلیت تغییر وضعیت ندارد.')" style="font-size: 30px;" ></i></a></td> 
-                    <td><a href="#"><i class="fa fa-exclamation-circle text-dark" onclick="alert('این دستگاه آرشیوی است و قابلیت تحویل ندارد.')" style="font-size: 30px;"></i></a></td> 
-                @endif
+            <td><a href="/edit/{{ $item->id}}"><i class="fa {{($route === "archive") ? "fa-print" : "fa-edit"}} text-primary" style="font-size: 30px;"></i></a></td> 
+            @if($route === 'manage') 
+                    <td><a href="#"><i class="fa fa-wrench text-primary" data-toggle="modal" data-target="#d-{{ $item->id}}" style="font-size: 30px;"></i></a></td> 
+                   <td><a href="#"><i class="fa fa-check text-primary" data-toggle="modal" data-target="#dd-{{ $item->id}}" style="font-size: 30px;"></i></a></td> 
             @endif
             </tr>
-            @if($route === 'manage' && $item->giver_id == 0)
+            @if($route === 'manage')
             <div class="modal fade" id="d-{{ $item->id}}" tabindex="-1" role="dialog" dir="rtl">
                 <div class="modal-dialog" role="document">
                 <form method="POST" action="{{ route('changeSituation')}}" >
@@ -113,7 +113,6 @@
               </div>
               @endif
 
-          @endforeach
 
      
     </tbody>
