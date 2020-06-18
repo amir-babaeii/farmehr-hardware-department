@@ -34,7 +34,7 @@
             @if($route === 'manage' )
                 @if( $item->giver_id == 0)
                     <td><a href="#" ><i class="fa fa-wrench text-primary"  data-toggle="modal" data-target="#d-{{ $item->id}}" style="font-size: 30px;"></i></a></td> 
-                   <td><a href="#"><i class="fa fa-check text-primary" style="font-size: 30px;"></i></a></td> 
+                   <td><a href="#"><i class="fa fa-check text-primary"  data-toggle="modal" data-target="#dd-{{ $item->id}}" style="font-size: 30px;"></i></a></td> 
                 @else
                     <td><a href="#" ><i class="fa fa-exclamation-circle text-dark" onclick="alert('این دستگاه آرشیوی است و قابلیت تغییر وضعیت ندارد.')" style="font-size: 30px;" ></i></a></td> 
                     <td><a href="#"><i class="fa fa-exclamation-circle text-dark" onclick="alert('این دستگاه آرشیوی است و قابلیت تحویل ندارد.')" style="font-size: 30px;"></i></a></td> 

@@ -189,7 +189,7 @@ class CMSController extends Controller
         $customer = Customer::find($id);
         // dd($customer->id);
         $editable = false;
-        if($customer->giver_id===0 || auth()->user()->username === 'admin'){
+        if($customer->giver_id==0 || auth()->user()->username === 'admin'){
             $editable = true;
         }
         $customer->giver_name= (User::find($customer->giver_id) !=null )? User::find($customer->giver_id)->fullname : "نامی ثبت نشده است.";
