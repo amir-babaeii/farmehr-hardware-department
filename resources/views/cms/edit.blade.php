@@ -79,7 +79,7 @@
                         <div class="row py-3">
 
                             <div class="form-group row col-lg-6 ">
-                                <label for="truble" class="col-lg-4 col-form-label text-md-right ">اطلاعات خرابی</label>
+                                <label for="truble" class="col-lg-4 col-form-label text-md-right ">اشکال ذکر شده توسط صاحب دستگاه</label>
 
                                 <div class="col-lg-8">
                                     <textarea {{($editable === false) ? "disabled" : ""}} id="truble" style="min-height: 100px" class="form-control @error('truble') is-invalid @enderror" name="truble" value="{{ $data->truble }}"  autocomplete="truble" autofocus></textarea>
