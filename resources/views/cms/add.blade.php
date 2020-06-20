@@ -1,7 +1,22 @@
 @extends('layouts.cms')
 
 @section('body')
-    
+    <script defer>
+        function addOption(value){
+            if(value == "add")
+            {
+                $('#addO').modal('show');
+            }
+        }
+        var i=0;
+        function addNewOption() {
+            i++;
+            var a = document.getElementById("selectOpt").innerHTML;
+            var name = document.getElementById("newOptionName").value;
+            a += '<option value="'+ i +'">'+name+'</option>';
+            document.getElementById("selectOpt").innerHTML = a;
+        }
+    </script>
                 <div  class="card-header bg-success">فرم افزودن کالای خراب</div>
 
                 <div class="card-body">
@@ -37,15 +52,38 @@
                             <div class="form-group row col-lg-4 ">
                                 <label for="type" class="col-lg-6 col-form-label text-md-right  ">نوع دستگاه</label>
 
-                                <select name="type" class="col-lg-6 form-control " id="type">
-                                <option>کامپیوتر</option>
-                                <option>لپ تاپ</option>
-                                <option>مانیتور</option>
-                                <option>گوشی</option>
-                                <option>افزودن گزینه جدید</option>
+                                <select name="type" class="col-lg-6 form-control "   onchange="addOption(value)" id="selectOpt">
+                                <option >کامپیوتر</option>
+                                <option >لپ تاپ</option>
+                                <option >مانیتور</option>
+                                <option >گوشی</option>
+                                <option value="add">افزودن گزینه جدید</option>
                                 </select>
                         
                             </div>
+                            <div class="modal fade " id="addO" tabindex="-1" role="dialog" dir="rtl">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"> افزودن گزینه جدید</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group mt-3 row">
+                                                <label class="col-4"> نوع دستگاه جدید</label>
+                                                <input id="newOptionName" class="form-control col-8" >
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" onclick="addNewOption()" class="btn btn-primary"  data-dismiss="modal">افزودن</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+                                        </div>
+                                    </div>
+                                
+                                </div>
+                              </div>
                             <div class="form-group row col-lg-4 ">
                                 <label for="model" class="col-lg-3 col-form-label text-md-right ">مدل</label>
 
@@ -171,7 +209,7 @@
                     }
                 </style>
                 <script> 
-
+                    
                     function printDiv() { 
 
                         var divContents1 = document.getElementById("id").outerHTML; 

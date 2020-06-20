@@ -37,6 +37,7 @@
                                 <label for="type" class="col-lg-6 col-form-label text-md-right  ">نوع دستگاه</label>
 
                                 <select {{($editable === false) ? "disabled" : ""}}  name="type" value="{{ $data->type }}" class="col-lg-6 form-control " id="type">
+                                <option>{{ $data->type }}</option>
                                 <option>کامپیوتر</option>
                                 <option>لپ تاپ</option>
                                 <option>مانیتور</option>
@@ -181,7 +182,9 @@
                         </div>
                          <div class="row py-4 " dir="ltr" >
                             <button style="{{($editable === false) ? 'display: none;' : ''}}" type="submit"  name="submit" class="btn btn-success  col-lg-2">ویرایش</button>
-                            <button type="button" onclick="printDiv()" name="submit" class="btn btn-dark {{($editable === false) ? 'col-lg-2' : 'offset-8 col-lg-2'}} ">چاپ</button>
+                            <button type="button" onclick="printDiv()" name="submit" class="btn btn-dark {{($editable === false) ? 'col-lg-2' : 'offset-5 col-lg-2 mr-5'}} ">چاپ رسید</button>
+                            <button type="button" onclick="printDivShenase()" name="submit" class="btn btn-dark {{($editable === false) ? 'col-lg-2' : 'col-lg-2'}} ">چاپ شناسه</button>
+
                          </div>
     
                     </form>
@@ -191,7 +194,20 @@
                 </div>
 <script> 
 
+        function printDivShenase() { 
 
+        var divContents1 = document.getElementById("id").outerHTML; 
+        var divContents2 = document.getElementById("name").value; 
+        var a = window.open('', '', 'height=4, width=2'); 
+        a.document.write('<html>'); 
+        a.document.write('<body dir="rtl"> <h1 class="text-center" style="margin-right:35%">فرمهر رایانه<br>'); 
+        a.document.write('<lable>شناسه دستگاه : ' + divContents1 + '</lable><br>'); 
+        a.document.write('<lable>نام مشتری : ' + divContents2 + '</lable>'); 
+        a.document.write('</body></html>'); 
+        a.document.close(); 
+        a.print(); 
+
+        } 
     function ImagetoPrint(source)
     {
         return "<html><head><scr"+"ipt>function step1(){\n" +
