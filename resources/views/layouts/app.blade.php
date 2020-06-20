@@ -19,7 +19,7 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF8">
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link rel="stylesheet" type="text/css" href="font/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../font/font-awesome-4.7.0/css/font-awesome.min.css">
 
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 

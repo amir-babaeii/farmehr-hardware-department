@@ -197,10 +197,10 @@
 
     function ImagetoPrint(source)
     {
-        return "<html><head><script>function step1(){\n" +
+        return "<html><head><scr"+"ipt>function step1(){\n" +
                 "setTimeout('step2()', 10);}\n" +
                 "function step2(){window.print();window.close()}\n" +
-                "</script></head><body onload='step1()'>\n" +
+                "</scr"+"ipt></head><body onload='step1()'>\n" +
                 "<img src='" + source + "' /></body></html>";
     }
 
