@@ -189,10 +189,7 @@
                   
 
                 </div>
-                <script> 
-                function btn(){
-
-                }
+<script> 
 
 
     function ImagetoPrint(source)
