@@ -13,7 +13,7 @@
             i++;
             var a = document.getElementById("selectOpt").innerHTML;
             var name = document.getElementById("newOptionName").value;
-            a += '<option value="'+ i +'">'+name+'</option>';
+            a += '<option selected >'+name+'</option>';
             document.getElementById("selectOpt").innerHTML = a;
         }
     </script>

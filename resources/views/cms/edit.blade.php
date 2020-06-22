@@ -1,7 +1,22 @@
 @extends('layouts.cms')
 
 @section('body')
-    
+<script defer>
+    function addOption(value){
+        if(value == "add")
+        {
+            $('#addO').modal('show');
+        }
+    }
+    var i=0;
+    function addNewOption() {
+        i++;
+        var a = document.getElementById("selectOpt").innerHTML;
+        var name = document.getElementById("newOptionName").value;
+        a += '<option selected >'+name+'</option>';
+        document.getElementById("selectOpt").innerHTML = a;
+    }
+</script>
                 <div  class="card-header bg-success">فرم ویرایش کالای خراب</div>
 
                 <div class="card-body">
@@ -36,16 +51,39 @@
                             <div class="form-group row col-lg-4 ">
                                 <label for="type" class="col-lg-6 col-form-label text-md-right  ">نوع دستگاه</label>
 
-                                <select {{($editable === false) ? "disabled" : ""}}  name="type" value="{{ $data->type }}" class="col-lg-6 form-control " id="type">
-                                <option>{{ $data->type }}</option>
-                                <option>کامپیوتر</option>
-                                <option>لپ تاپ</option>
-                                <option>مانیتور</option>
-                                <option>گوشی</option>
-                                <option>افزودن گزینه جدید</option>
+                                <select name="type" class="col-lg-6 form-control "     onchange="addOption(value)" id="selectOpt">
+                                <option >{{$data->type}}</option>
+                                <option >کامپیوتر</option>
+                                <option >لپ تاپ</option>
+                                <option >مانیتور</option>
+                                <option >گوشی</option>
+                                <option value="add">افزودن گزینه جدید</option>
                                 </select>
                         
                             </div>
+                            <div class="modal fade " id="addO" tabindex="-1" role="dialog" dir="rtl">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"> افزودن گزینه جدید</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group mt-3 row">
+                                                <label class="col-4"> نوع دستگاه جدید</label>
+                                                <input id="newOptionName" class="form-control col-8" >
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" onclick="addNewOption()" class="btn btn-primary"  data-dismiss="modal">افزودن</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+                                        </div>
+                                    </div>
+                                
+                                </div>
+                              </div>
                             <div class="form-group row col-lg-4 ">
                                 <label for="model" class="col-lg-3 col-form-label text-md-right ">مدل</label>
 
@@ -181,10 +219,10 @@
                             </div>
                         </div>
                          <div class="row py-4 " dir="ltr" >
-                            <button style="{{($editable === false) ? 'display: none;' : ''}}" type="submit"  name="submit" class="btn btn-success  col-lg-2">ویرایش</button>
-                            <button type="button" onclick="printDiv()" name="submit" class="btn btn-dark {{($editable === false) ? 'col-lg-2' : 'offset-5 col-lg-2 mr-5'}} ">چاپ رسید</button>
-                            <button type="button" onclick="printDivShenase()" name="submit" class="btn btn-dark {{($editable === false) ? 'col-lg-2' : 'col-lg-2'}} ">چاپ شناسه</button>
-
+                            <button id="btn1" style="{{($editable === false) ? 'display: none;' : ''}}" type="submit"  name="submit" class="btn btn-success  col-lg-2">ویرایش</button>
+                            <button id="btn2" type="button" onclick="printDiv()" name="submit" class="btn btn-dark {{($editable === false) ? 'col-lg-2' : 'offset-5 col-lg-2 mr-5'}} ">چاپ رسید</button>
+                            <button id="btn3" type="button" onclick="printDivShenase()" name="submit" class="btn btn-dark {{($editable === false) ? 'col-lg-2' : 'col-lg-2'}} ">چاپ شناسه</button>
+                            <i id="signn" style="display: none" class="offset-10 col-2">امضاء مشتری</i>
                          </div>
     
                     </form>
@@ -226,21 +264,32 @@
         pwa.document.close();
     }
     function printDiv() { 
-
         var node = document.getElementById('myForm');
 
-        domtoimage.toPng(node)
-            .then(function (dataUrl) {
-                // var img = new Image();
-                // img.src = dataUrl;
-                PrintImage(dataUrl);
-                //document.body.appendChild(img);
-                // console.log(img)
-            })
-            .catch(function (error) {
-                console.error('oops, something went wrong!', error);
-            });   
-        
+        document.getElementById("btn1").style.display = 'none';
+            document.getElementById("btn2").style.display = 'none';
+            document.getElementById("btn3").style.display = 'none';
+            document.getElementById("signn").style.display = 'block';
+
+       
+            domtoimage.toPng(node)
+                .then(function (dataUrl) {
+                    // var img = new Image();
+                    // img.src = dataUrl;
+                    PrintImage(dataUrl);
+                    //document.body.appendChild(img);
+                    // console.log(img)
+                    
+                    document.getElementById("btn1").style.display = 'block';
+                    document.getElementById("btn2").style.display = 'block';
+                    document.getElementById("btn3").style.display = 'block';
+                    document.getElementById("signn").style.display = 'none';
+                })
+                .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                });   
+       
+
 
     } 
                 </script> 

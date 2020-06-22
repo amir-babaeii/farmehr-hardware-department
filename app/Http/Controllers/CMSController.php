@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use App\Customer;
 use DateTime;
 use App\User;
+use Aws\Common\Exception\MultipartUploadException;
+use Aws\S3\MultipartUploader;
+use Aws\S3\S3Client;
+
+
 class CMSController extends Controller
 {
     //
@@ -111,8 +116,11 @@ class CMSController extends Controller
     }
 
     public function showManage(){
-
-        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','=','0')->paginate(10);
+        
+      
+        $this->backup();
+        
+        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','=','0')->orderBy('id','DESC')->paginate(10);
         foreach ($customers as $key => $customer) {
             # code...
             switch ($customer->situation) {
@@ -150,7 +158,7 @@ class CMSController extends Controller
     
     public function showArchive(){
 
-        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','>','0')->paginate(10);
+        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','>','0')->orderBy('id','DESC')->paginate(10);
         foreach ($customers as $key => $customer) {
             # code...
             switch ($customer->situation) {
@@ -300,7 +308,6 @@ class CMSController extends Controller
 
             
         ]);
-        
         $customer = Customer::find($r->id);
         $customer->situation = $r->situation;
         $customer->situation_text = $r->situation_text;
@@ -322,5 +329,54 @@ class CMSController extends Controller
 
         return redirect('/manage');
         // $customer->situation
+    }
+
+    public function backup()
+    {
+        try {
+            set_time_limit(30);
+
+            define('AWS_KEY', env('AWS_KEY'));
+
+            define('AWS_SECRET_KEY', env('AWS_SECRET_KEY'));
+
+            $ENDPOINT = env('AWS_ENDPOINT');
+            $client = new S3Client([
+
+                'region' => '',
+            
+                'version' => 'latest',
+            
+                'endpoint' => $ENDPOINT,
+            
+                'credentials' => [
+            
+                    'key' => AWS_KEY,
+            
+                    'secret' => AWS_SECRET_KEY
+            
+                ],
+            
+                // Set the S3 class to use objects.dreamhost.com/bucket
+            
+                // instead of bucket.objects.dreamhost.com
+            
+                'use_path_style_endpoint' => true
+            
+            ]);
+            $bucket =  env('AWS_S3_BUCKET');
+            $keyname =  env('AWS_KEY');
+            $uploader = new MultipartUploader($client, public_path("/database/farmehr.db"), [
+                'bucket' => $bucket,
+                'key'    => $keyname
+            ]);
+            
+            // Perform the upload.
+        
+            $result = $uploader->upload();
+            // echo "Upload complete: {$result['ObjectURL']}" . PHP_EOL;
+        } catch (MultipartUploadException $e) {
+            echo $e->getMessage() . PHP_EOL;
+        }
     }
 }
