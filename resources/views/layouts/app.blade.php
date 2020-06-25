@@ -11,23 +11,27 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="{{ asset('js/html2canvas.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}" ></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
 
     <script src="{{ asset('js/dom-to-image.min.js') }}"></script>
-    
+    <script src="{{ asset('js/jquery.md.bootstrap.datetimepicker.js') }}" ></script>
+
+    <script src="{{ asset('js/html2canvas.js') }}"></script>
     <meta http-equiv="content-type" content="text/html; charset=UTF8">
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="stylesheet" type="text/css" href="../font/font-awesome-4.7.0/css/font-awesome.min.css">
 
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-
     <!-- Styles -->
     {{-- <link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.2.1/css/bootstrap.min.css" integrity="sha384-vus3nQHTD+5mpDiZ4rkEPlnkcyTP+49BhJ4wJeJunw06ZAp+wzzeBPUXr42fi8If" crossorigin="anonymous"> --}}
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('font/font.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/jquery.md.bootstrap.datetimepicker.style.css') }}" rel="stylesheet"/>
 
 </head>
 <body>

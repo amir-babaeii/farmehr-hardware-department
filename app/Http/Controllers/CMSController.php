@@ -9,6 +9,7 @@ use App\User;
 use Aws\Common\Exception\MultipartUploadException;
 use Aws\S3\MultipartUploader;
 use Aws\S3\S3Client;
+use Verta;
 
 
 class CMSController extends Controller
@@ -69,6 +70,8 @@ class CMSController extends Controller
         return redirect('/manage');
     }
     public function edit($id,Request $r){
+        dd($r->all());
+
         $r->validate([
             'name' => 'required|string|max:30|',
             'phone' => 'required|max:30',
@@ -110,7 +113,10 @@ class CMSController extends Controller
         $customer->repair_information = $r->repair_information;
         $customer->situation = ($r->situation !=null )  ?$r->situation : 0;
         $customer->situation_text = $r->situation_text;
+        $customer->get_date = $r->get_date;
+        $customer->out_date = $r->out_date;
         // $customer->out_date = $r->out_date;
+       
         $customer->save();
         return redirect('/edit/'.$id)->with('success','تغییرات با موفقیت اعمال شد.');
     }
@@ -241,6 +247,9 @@ class CMSController extends Controller
                 $customer->situation_name = "تحویل گرفته شده";
                 break;
         }
+        $customer->get_date_shamsi = Verta::instance( $customer->get_date);
+        $customer->out_date_shamsi = Verta::instance( $customer->out_date);
+        // dd($customer);
         return view('cms.edit')->with(['data'=>$customer,'route' => 'manage','editable' => $editable]);
     }
 

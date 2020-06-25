@@ -215,8 +215,8 @@
                         var divContents1 = document.getElementById("id").outerHTML; 
                         var divContents2 = document.getElementById("name").value; 
                         var a = window.open('', '', 'height=4, width=2'); 
-                        a.document.write('<html>'); 
-                        a.document.write('<body dir="rtl"> <h1 class="text-center" style="margin-right:35%">فرمهر رایانه<br>'); 
+                        a.document.write('<html dir="rtl" style="text-align:right">'); 
+                        a.document.write('<body > <h1 >فرمهر رایانه<br>'); 
                         a.document.write('<lable>شناسه دستگاه : ' + divContents1 + '</lable><br>'); 
                         a.document.write('<lable>نام مشتری : ' + divContents2 + '</lable>'); 
                         a.document.write('</body></html>'); 
