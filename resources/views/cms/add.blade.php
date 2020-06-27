@@ -163,20 +163,40 @@
                             </div>
                          </div>  
                          <div class="row py-3">
-                            <div class="form-group row col-lg-6 ">
-                                <label for="get_date" class="col-lg-3 col-form-label text-md-right ">زمان دریافت</label>
-
-                                <div class="col-lg-9">
-                                    <input id="get_date" type="time"  step="1" class="form-control @error('get_date') is-invalid @enderror" name="get_date" value="{{ old('get_date') }}"  autocomplete="get_date" autofocus disabled></textarea>
+                                <div class="form-group row col-lg-6 ">
+                                    
+                                    <label for="get_date" class="col-lg-3 col-form-label text-md-right ">زمان دریافت</label>
+    
+                                    <div class="input-group">
+                                       
+                                        <input  type="text" id="inputDate1" class="form-control " placeholder="Persian Calendar Text" 
+                                            aria-label="date1" aria-describedby="date1">
+                                        <input type="hidden" name="get_date"  id="inputDate11">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text cursor-pointer" id="date1">انتخاب</span>
+                                        </div>
+                                    </div>
+                                    {{-- <div class="col-lg-9">
+                                        <input {{($editable === false) ? "disabled" : ""}} id="get_date" type="datetime"  step="1" class="form-control @error('get_date') is-invalid @enderror" name="get_date" value="{{ $data->get_date }}"  autocomplete="get_date" autofocus disabled>
+                                    </div> --}}
                                 </div>
-                            </div>
-                            <div class="form-group row col-lg-6">
-                                <label for="out_date" class="col-lg-3 col-form-label text-md-right ">زمان تحویل</label>
-
-                                <div class="col-lg-9">
-                                    <input id="out_date" type="time"  step="1" class="form-control @error('out_date') is-invalid @enderror" name="out_date" value="{{ old('out_date') }}"  autocomplete="out_date" autofocus disabled></textarea>
+                                <div class="form-group row col-lg-6">
+                                    <label for="out_date" class="col-lg-3 col-form-label text-md-right ">زمان تحویل</label>
+    
+                                    <div class="input-group">
+                                       
+                                        <input  type="text" id="inputDate2" class="form-control " placeholder="Persian Calendar Text" 
+                                            aria-label="date2" aria-describedby="date2">
+                                        <input type="hidden" name="out_date"  id="inputDate22">
+    
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text cursor-pointer" id="date2">انتخاب</span>
+                                        </div>
+                                    </div>
+                                    {{-- <div class="col-lg-9">
+                                        <input {{($editable === false) ? "disabled" : ""}} id="out_date" type="datetime"  step="1" class="form-control @error('out_date') is-invalid @enderror" name="out_date" value="{{ $data->out_date }}"  autocomplete="out_date" autofocus disabled>
+                                    </div> --}}
                                 </div>
-                            </div>
                          </div>
                          <div class="form-group row col-lg-12 ">
                             <label for="p_id" class="col-lg-2 col-form-label text-md-right">تحویل گیرنده:</label>
@@ -209,7 +229,32 @@
                     }
                 </style>
                 <script> 
-                    
+                    function changeDate(){
+                        var date1 =$('#date1').MdPersianDateTimePicker('getDate')
+                        // alert(dateToStr(date1));
+                        $('#inputDate11').val(dateToStr(date1));
+                        var date2 =$('#date2').MdPersianDateTimePicker('getDate')
+                        // alert(dateToStr(date2));
+                        $('#inputDate22').val(dateToStr(date2));
+                    }
+                    function dateToStr(date) {
+                        return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " +date.getHours() + ":" +date.getMinutes() + ":" + date.getSeconds()	;
+                    }
+                    $('#date1').MdPersianDateTimePicker({
+                        targetTextSelector: '#inputDate1',
+                        targetDateSelector: '#inputDate11',
+                        dateFormat	: 'yyyy-MM-dd HH:mm:ss',
+                        isGregorian: false,
+                        enableTimePicker: true,
+                        disabledDays: [ 6],
+                    });
+                    $('#date2').MdPersianDateTimePicker({
+                        targetTextSelector: '#inputDate2',
+                        targetDateSelector: '#inputDate22',
+                        isGregorian: false,
+                        enableTimePicker: true,
+                        disabledDays: [ 6]
+                    });
                     function printDiv() { 
 
                         var divContents1 = document.getElementById("id").outerHTML; 

@@ -5,7 +5,7 @@
 <table class="table" dir="rtl">
     <thead class="thead" style="background-color: #38c172">
       <tr>
-        <th scope="col">#id</th>
+        <th scope="col">#id({{count($data)}})</th>
         <th scope="col">نام و نام خانودگی</th>
         <th scope="col">نوع دستگاه</th>
         <th scope="col">مدل دستگاه</th>

@@ -156,7 +156,6 @@
 
                             <div class="form-group row col-lg-12">
                                 <label for="other_information" class="col-lg-2 col-form-label text-md-right ">اطلاعات تکمیلی</label>
-                                    <input type="hidden" name="get_date" value="{{ $data->get_date }}" id="inputDate11">
 
                                 <div class="col-lg-10">
                                     <textarea {{($editable === false) ? "disabled" : ""}} id="other_information" class="form-control @error('other_information') is-invalid @enderror" name="other_information"   autocomplete="other_information" autofocus>{{ $data->other_information }}</textarea>
@@ -253,10 +252,18 @@
                 </div>
 <script> 
 //EnableMdDateTimePickers();
-function changeDate(){
-    alert($('#date1').MdPersianDateTimePicker('getDate'));
-    $('#inputDate22').val($('#date2').MdPersianDateTimePicker('getDate'));
-}
+@if($editable)
+        function changeDate(){
+            var date1 =$('#date1').MdPersianDateTimePicker('getDate')
+            // alert(dateToStr(date1));
+            $('#inputDate11').val(dateToStr(date1));
+            var date2 =$('#date2').MdPersianDateTimePicker('getDate')
+            // alert(dateToStr(date2));
+            $('#inputDate22').val(dateToStr(date2));
+        }
+        function dateToStr(date) {
+            return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " +date.getHours() + ":" +date.getMinutes() + ":" + date.getSeconds()	;
+        }
         $('#date1').MdPersianDateTimePicker({
             targetTextSelector: '#inputDate1',
             targetDateSelector: '#inputDate11',
@@ -272,7 +279,7 @@ function changeDate(){
             enableTimePicker: true,
             disabledDays: [ 6]
         });
-
+@endif
         function printDivShenase() { 
 
             var divContents1 = document.getElementById("id").outerHTML; 

@@ -60,7 +60,12 @@ class CMSController extends Controller
         ($r->printer=='on' ? "پرینتر," :"");
         $customer->other_information = $r->other_information;
         $customer->address = $r->address;
-        $customer->get_date = $date->format('Y-m-d H:i:s');
+        if(isset($r->get_date) &&  $r->get_date !== null )
+            $customer->get_date = $r->get_date;
+        else
+            $customer->get_date = $date->format('Y-m-d H:i:s');
+        if(isset($r->out_date) &&  $r->out_date !== null )
+            $customer->out_date = $r->out_date;
         $customer->getter_id = auth()->user()->id;
         $customer->truble = $r->truble;
         $customer->repair_information = $r->repair_information;
@@ -70,7 +75,6 @@ class CMSController extends Controller
         return redirect('/manage');
     }
     public function edit($id,Request $r){
-        dd($r->all());
 
         $r->validate([
             'name' => 'required|string|max:30|',
@@ -116,8 +120,13 @@ class CMSController extends Controller
         $customer->get_date = $r->get_date;
         $customer->out_date = $r->out_date;
         // $customer->out_date = $r->out_date;
-       
+        if(isset($customer->out_date) &&  $customer->out_date !== null )
+            $customer->giver_id=auth()->user()->id;
+
         $customer->save();
+        // dd($customer);
+
+      
         return redirect('/edit/'.$id)->with('success','تغییرات با موفقیت اعمال شد.');
     }
 
@@ -156,6 +165,11 @@ class CMSController extends Controller
             if(User::find($customer->getter_id) !==null){
                 $customer->getter_name = User::find($customer->getter_id)->fullname;
             }
+            $exp = explode(" ",$customer->get_date);
+            $date = explode("-",$exp[0]);
+            $time = explode(":",$exp[1]);
+            $customer->get_date = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+    
         }
         // dd($customers);
 
@@ -193,7 +207,13 @@ class CMSController extends Controller
             if(User::find($customer->getter_id) !==null){
                 $customer->getter_name = User::find($customer->getter_id)->fullname;
             }
+            $exp = explode(" ",$customer->get_date);
+            $date = explode("-",$exp[0]);
+            $time = explode(":",$exp[1]);
+            $customer->get_date = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+    
         }
+  
         return view('cms.manage')->with(['data'=>$customers->items(),'route' => 'archive']);
     }
 
@@ -247,15 +267,72 @@ class CMSController extends Controller
                 $customer->situation_name = "تحویل گرفته شده";
                 break;
         }
-        $customer->get_date_shamsi = Verta::instance( $customer->get_date);
-        $customer->out_date_shamsi = Verta::instance( $customer->out_date);
-        // dd($customer);
+        $exp = explode(" ",$customer->get_date);
+        $date = explode("-",$exp[0]);
+        $time = explode(":",$exp[1]);
+        $customer->get_date_shamsi = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+
+        if(isset($customer->out_date) && $customer->out_date !== null){
+            $exp = explode(" ",$customer->out_date);
+            $date = explode("-",$exp[0]);
+            $time = explode(":",$exp[1]);
+            
+            $customer->out_date_shamsi = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+        }
+        //  dd($customer);
         return view('cms.edit')->with(['data'=>$customer,'route' => 'manage','editable' => $editable]);
     }
 
-    public function showDashboard()
+    public function showDashboard(Request $r)
     {
-        return "این صفحه فعلا در دسترس نمی باشد.";
+        // dd($r->all());
+        $r->validate([
+            'from' => 'string|max:30',
+            'to' => 'string|max:30',
+        ]);
+        if (isset($r->from) && $r->from !==null && isset($r->to) && $r->to !==null) {
+            $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id','giver_id'])->where('get_date', '>=', $r->from)
+            ->where('get_date', '<=', $r->to)->orderBy('get_date','ASC')->get();
+        }else {
+            $customers =[];
+        }
+        foreach ($customers as $key => $customer) {
+            # code...
+            switch ($customer->situation) {
+                case 0:
+                    # code...
+                    $customer->situation_name = "تحویل گرفته شده است";
+                    break;
+                case 1:
+                    # code...
+                    $customer->situation_name = "تعمیر شده است";
+                    break;
+                case 2:
+                    # code...
+                    $customer->situation_name = "تعمیر نشده است";
+                    break;
+                case 3:
+                    # code...
+                    $customer->situation_name = "در حال تعمیر";
+                    break;
+
+                default:
+                    # code...
+                    $customer->situation_name = "تحویل گرفته شده";
+                    break;
+            }
+            if(User::find($customer->getter_id) !==null){
+                $customer->getter_name = User::find($customer->getter_id)->fullname;
+            }
+            $exp = explode(" ",$customer->get_date);
+            $date = explode("-",$exp[0]);
+            $time = explode(":",$exp[1]);
+            $customer->get_date = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+            
+        }
+
+        //  dd($from);
+        return view('cms.dashboard')->with(['data'=>$customers,'route' => 'manage','from' =>$r->from ,'to' => $r->to]); 
     }
 
     public function search(Request $r)
@@ -301,6 +378,11 @@ class CMSController extends Controller
             if(User::find($customer->getter_id) !==null){
                 $customer->getter_name = User::find($customer->getter_id)->fullname;
             }
+            $exp = explode(" ",$customer->get_date);
+            $date = explode("-",$exp[0]);
+            $time = explode(":",$exp[1]);
+            $customer->get_date = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+    
         }
         return view('cms.manage')->with(['data'=>$customers,'route' => 'manage']);
         
