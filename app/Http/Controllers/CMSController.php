@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Customer;
 use DateTime;
 use App\User;
+// use App\Product;
+
 use Aws\Common\Exception\MultipartUploadException;
 use Aws\S3\MultipartUploader;
 use Aws\S3\S3Client;
@@ -21,6 +23,7 @@ class CMSController extends Controller
     } 
     public function showAdd(Request $r){
         $user = auth()->user()->fullname;
+        // $products = Product::all();
         if(Customer::latest()->first() !== null)
             $id =Customer::latest()->first()->id;
         else
@@ -173,12 +176,13 @@ class CMSController extends Controller
         }
         // dd($customers);
 
-        return view('cms.manage')->with(['data'=>$customers->items(),'route' => 'manage']);
+        return view('cms.manage')->with(['data'=>$customers,'route' => 'manage']);
     }
     
     public function showArchive(){
 
         $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','>','0')->orderBy('id','DESC')->paginate(10);
+       $paginator = $customers->links();
         foreach ($customers as $key => $customer) {
             # code...
             switch ($customer->situation) {
@@ -214,7 +218,7 @@ class CMSController extends Controller
     
         }
   
-        return view('cms.manage')->with(['data'=>$customers->items(),'route' => 'archive']);
+        return view('cms.manage')->with(['data'=>$customers,'paginator' => $paginator,'route' => 'archive']);
     }
 
 

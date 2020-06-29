@@ -1,6 +1,8 @@
 @extends('layouts.cms')
 
 @section('body')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
     <script defer>
         function addOption(value){
             if(value == "add")
@@ -88,8 +90,20 @@
                                 <label for="model" class="col-lg-3 col-form-label text-md-right ">مدل</label>
 
                                 <div class="col-lg-9">
-                                    <input id="model"class="form-control @error('model') is-invalid @enderror" name="model" value="{{ old('model') }}"  autocomplete="model"  autofocus>
+                                    <input id="model" class="form-control @error('model') is-invalid @enderror" name="model" value="{{ old('model') }}"  autocomplete="model"  autofocus>
                                 </div>
+                                {{-- <select class="js-model col-lg-9 form-control pt-4 @error('model') is-invalid @enderror" value="{{ old('model') }}" multiple="multiple" name="model">
+                                    
+                                    <option value="two" >Second</option>
+                                    <option value="three">Third</option>
+                                    <option value="three">Forth</option>
+                                    <option value="three">Fifth</option>
+                                    <option value="three">Sixth</option>
+                                    @foreach ($products as $item)
+                                        <option value="{{$item}}">{{$item}}</option>
+                                    @endforeach
+                                    <option value="three">افزودن</option>
+                                </select> --}}
                             </div>
                             <div class="form-group row col-lg-4 ">
                                 <label for="serie" class="col-lg-5 col-form-label text-md-right">شماره سریال</label>
@@ -229,6 +243,53 @@
                     }
                 </style>
                 <script> 
+
+
+
+// function matchStart(params, data) {
+//   // If there are no search terms, return all of the data
+//   if ($.trim(params.term) === '') {
+//     return data;
+//   }
+
+//   // Skip if there is no 'children' property
+//   if (typeof data.children === 'undefined') {
+//     return null;
+//   }
+
+//   // `data.children` contains the actual options that we are matching against
+//   var filteredChildren = [];
+//   $.each(data.children, function (idx, child) {
+//     if (child.text.toUpperCase().indexOf(params.term.toUpperCase()) == 0) {
+//       filteredChildren.push(child);
+//     }
+//   });
+
+//   // If we matched any of the timezone group's children, then set the matched children on the group
+//   // and return the group object
+//   if (filteredChildren.length) {
+//     var modifiedData = $.extend({}, data, true);
+//     modifiedData.children = filteredChildren;
+
+//     // You can return modified objects from here
+//     // This includes matching the `children` how you want in nested data sets
+//     return modifiedData;
+//   }
+
+//   // Return `null` if the term should not be displayed
+//   return null;
+// }
+// $(".js-model").select2({
+//         matcher: matchStart
+//     });
+// $(document).ready(function() {
+    
+// });
+
+
+
+
+
                     function changeDate(){
                         var date1 =$('#date1').MdPersianDateTimePicker('getDate')
                         // alert(dateToStr(date1));

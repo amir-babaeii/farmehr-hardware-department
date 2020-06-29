@@ -12,7 +12,7 @@ function validateDateTime($dateStr, $format)
 <div  class="card-header bg-success">گزارش گیری محصولات</div>
 
 <div class="card-body" dir="rtl">
-<div class="main" style="height: 1000px">
+<div class="main" style="min-height: 1000px">
     <form action="" method="GET">
     <div class="row py-3">
         <div class="form-group row col-lg-6 ">
