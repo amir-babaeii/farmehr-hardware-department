@@ -1,6 +1,8 @@
 @extends('layouts.cms')
 
 @section('body')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
     <script defer>
         function addOption(value){
             if(value == "add")
@@ -13,7 +15,7 @@
             i++;
             var a = document.getElementById("selectOpt").innerHTML;
             var name = document.getElementById("newOptionName").value;
-            a += '<option value="'+ i +'">'+name+'</option>';
+            a += '<option selected >'+name+'</option>';
             document.getElementById("selectOpt").innerHTML = a;
         }
     </script>
@@ -88,8 +90,20 @@
                                 <label for="model" class="col-lg-3 col-form-label text-md-right ">مدل</label>
 
                                 <div class="col-lg-9">
-                                    <input id="model"class="form-control @error('model') is-invalid @enderror" name="model" value="{{ old('model') }}"  autocomplete="model"  autofocus>
+                                    <input id="model" class="form-control @error('model') is-invalid @enderror" name="model" value="{{ old('model') }}"  autocomplete="model"  autofocus>
                                 </div>
+                                {{-- <select class="js-model col-lg-9 form-control pt-4 @error('model') is-invalid @enderror" value="{{ old('model') }}" multiple="multiple" name="model">
+                                    
+                                    <option value="two" >Second</option>
+                                    <option value="three">Third</option>
+                                    <option value="three">Forth</option>
+                                    <option value="three">Fifth</option>
+                                    <option value="three">Sixth</option>
+                                    @foreach ($products as $item)
+                                        <option value="{{$item}}">{{$item}}</option>
+                                    @endforeach
+                                    <option value="three">افزودن</option>
+                                </select> --}}
                             </div>
                             <div class="form-group row col-lg-4 ">
                                 <label for="serie" class="col-lg-5 col-form-label text-md-right">شماره سریال</label>
@@ -163,20 +177,40 @@
                             </div>
                          </div>  
                          <div class="row py-3">
-                            <div class="form-group row col-lg-6 ">
-                                <label for="get_date" class="col-lg-3 col-form-label text-md-right ">زمان دریافت</label>
-
-                                <div class="col-lg-9">
-                                    <input id="get_date" type="time"  step="1" class="form-control @error('get_date') is-invalid @enderror" name="get_date" value="{{ old('get_date') }}"  autocomplete="get_date" autofocus disabled></textarea>
+                                <div class="form-group row col-lg-6 ">
+                                    
+                                    <label for="get_date" class="col-lg-3 col-form-label text-md-right ">زمان دریافت</label>
+    
+                                    <div class="input-group">
+                                       
+                                        <input  type="text" id="inputDate1" class="form-control " placeholder="Persian Calendar Text" 
+                                            aria-label="date1" aria-describedby="date1">
+                                        <input type="hidden" name="get_date"  id="inputDate11">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text cursor-pointer" id="date1">انتخاب</span>
+                                        </div>
+                                    </div>
+                                    {{-- <div class="col-lg-9">
+                                        <input {{($editable === false) ? "disabled" : ""}} id="get_date" type="datetime"  step="1" class="form-control @error('get_date') is-invalid @enderror" name="get_date" value="{{ $data->get_date }}"  autocomplete="get_date" autofocus disabled>
+                                    </div> --}}
                                 </div>
-                            </div>
-                            <div class="form-group row col-lg-6">
-                                <label for="out_date" class="col-lg-3 col-form-label text-md-right ">زمان تحویل</label>
-
-                                <div class="col-lg-9">
-                                    <input id="out_date" type="time"  step="1" class="form-control @error('out_date') is-invalid @enderror" name="out_date" value="{{ old('out_date') }}"  autocomplete="out_date" autofocus disabled></textarea>
+                                <div class="form-group row col-lg-6">
+                                    <label for="out_date" class="col-lg-3 col-form-label text-md-right ">زمان تحویل</label>
+    
+                                    <div class="input-group">
+                                       
+                                        <input  type="text" id="inputDate2" class="form-control " placeholder="Persian Calendar Text" 
+                                            aria-label="date2" aria-describedby="date2">
+                                        <input type="hidden" name="out_date"  id="inputDate22">
+    
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text cursor-pointer" id="date2">انتخاب</span>
+                                        </div>
+                                    </div>
+                                    {{-- <div class="col-lg-9">
+                                        <input {{($editable === false) ? "disabled" : ""}} id="out_date" type="datetime"  step="1" class="form-control @error('out_date') is-invalid @enderror" name="out_date" value="{{ $data->out_date }}"  autocomplete="out_date" autofocus disabled>
+                                    </div> --}}
                                 </div>
-                            </div>
                          </div>
                          <div class="form-group row col-lg-12 ">
                             <label for="p_id" class="col-lg-2 col-form-label text-md-right">تحویل گیرنده:</label>
@@ -209,14 +243,86 @@
                     }
                 </style>
                 <script> 
-                    
+
+
+
+// function matchStart(params, data) {
+//   // If there are no search terms, return all of the data
+//   if ($.trim(params.term) === '') {
+//     return data;
+//   }
+
+//   // Skip if there is no 'children' property
+//   if (typeof data.children === 'undefined') {
+//     return null;
+//   }
+
+//   // `data.children` contains the actual options that we are matching against
+//   var filteredChildren = [];
+//   $.each(data.children, function (idx, child) {
+//     if (child.text.toUpperCase().indexOf(params.term.toUpperCase()) == 0) {
+//       filteredChildren.push(child);
+//     }
+//   });
+
+//   // If we matched any of the timezone group's children, then set the matched children on the group
+//   // and return the group object
+//   if (filteredChildren.length) {
+//     var modifiedData = $.extend({}, data, true);
+//     modifiedData.children = filteredChildren;
+
+//     // You can return modified objects from here
+//     // This includes matching the `children` how you want in nested data sets
+//     return modifiedData;
+//   }
+
+//   // Return `null` if the term should not be displayed
+//   return null;
+// }
+// $(".js-model").select2({
+//         matcher: matchStart
+//     });
+// $(document).ready(function() {
+    
+// });
+
+
+
+
+
+                    function changeDate(){
+                        var date1 =$('#date1').MdPersianDateTimePicker('getDate')
+                        // alert(dateToStr(date1));
+                        $('#inputDate11').val(dateToStr(date1));
+                        var date2 =$('#date2').MdPersianDateTimePicker('getDate')
+                        // alert(dateToStr(date2));
+                        $('#inputDate22').val(dateToStr(date2));
+                    }
+                    function dateToStr(date) {
+                        return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " +date.getHours() + ":" +date.getMinutes() + ":" + date.getSeconds()	;
+                    }
+                    $('#date1').MdPersianDateTimePicker({
+                        targetTextSelector: '#inputDate1',
+                        targetDateSelector: '#inputDate11',
+                        dateFormat	: 'yyyy-MM-dd HH:mm:ss',
+                        isGregorian: false,
+                        enableTimePicker: true,
+                        disabledDays: [ 6],
+                    });
+                    $('#date2').MdPersianDateTimePicker({
+                        targetTextSelector: '#inputDate2',
+                        targetDateSelector: '#inputDate22',
+                        isGregorian: false,
+                        enableTimePicker: true,
+                        disabledDays: [ 6]
+                    });
                     function printDiv() { 
 
                         var divContents1 = document.getElementById("id").outerHTML; 
                         var divContents2 = document.getElementById("name").value; 
                         var a = window.open('', '', 'height=4, width=2'); 
-                        a.document.write('<html>'); 
-                        a.document.write('<body dir="rtl"> <h1 class="text-center" style="margin-right:35%">فرمهر رایانه<br>'); 
+                        a.document.write('<html dir="rtl" style="text-align:right">'); 
+                        a.document.write('<body > <h1 >فرمهر رایانه<br>'); 
                         a.document.write('<lable>شناسه دستگاه : ' + divContents1 + '</lable><br>'); 
                         a.document.write('<lable>نام مشتری : ' + divContents2 + '</lable>'); 
                         a.document.write('</body></html>'); 

@@ -1,11 +1,11 @@
 @extends('layouts.cms')
 
 @section('body')
-<div class="main" style="height: 1000px">
+<div class="main" style="min-height: 1000px">
 <table class="table" dir="rtl">
     <thead class="thead" style="background-color: #38c172">
       <tr>
-        <th scope="col">#id</th>
+        <th scope="col">#id({{count($data)}})</th>
         <th scope="col">نام و نام خانودگی</th>
         <th scope="col">نوع دستگاه</th>
         <th scope="col">مدل دستگاه</th>
@@ -118,11 +118,16 @@
      
     </tbody>
   </table>
+
+
 <script>
     $('#myModal').on('shown.bs.modal', function () {
   $('#myInput').trigger('focus')
 })
 </script>
 </div>
+<div class="col-2 offset-5 text-center">
 
+    {{ $data->links() }}
+</div>
 @endsection

@@ -6,6 +6,14 @@ use Illuminate\Http\Request;
 use App\Customer;
 use DateTime;
 use App\User;
+// use App\Product;
+
+use Aws\Common\Exception\MultipartUploadException;
+use Aws\S3\MultipartUploader;
+use Aws\S3\S3Client;
+use Verta;
+
+
 class CMSController extends Controller
 {
     //
@@ -15,6 +23,7 @@ class CMSController extends Controller
     } 
     public function showAdd(Request $r){
         $user = auth()->user()->fullname;
+        // $products = Product::all();
         if(Customer::latest()->first() !== null)
             $id =Customer::latest()->first()->id;
         else
@@ -54,7 +63,12 @@ class CMSController extends Controller
         ($r->printer=='on' ? "پرینتر," :"");
         $customer->other_information = $r->other_information;
         $customer->address = $r->address;
-        $customer->get_date = $date->format('Y-m-d H:i:s');
+        if(isset($r->get_date) &&  $r->get_date !== null )
+            $customer->get_date = $r->get_date;
+        else
+            $customer->get_date = $date->format('Y-m-d H:i:s');
+        if(isset($r->out_date) &&  $r->out_date !== null )
+            $customer->out_date = $r->out_date;
         $customer->getter_id = auth()->user()->id;
         $customer->truble = $r->truble;
         $customer->repair_information = $r->repair_information;
@@ -64,6 +78,7 @@ class CMSController extends Controller
         return redirect('/manage');
     }
     public function edit($id,Request $r){
+
         $r->validate([
             'name' => 'required|string|max:30|',
             'phone' => 'required|max:30',
@@ -105,14 +120,25 @@ class CMSController extends Controller
         $customer->repair_information = $r->repair_information;
         $customer->situation = ($r->situation !=null )  ?$r->situation : 0;
         $customer->situation_text = $r->situation_text;
+        $customer->get_date = $r->get_date;
+        $customer->out_date = $r->out_date;
         // $customer->out_date = $r->out_date;
+        if(isset($customer->out_date) &&  $customer->out_date !== null )
+            $customer->giver_id=auth()->user()->id;
+
         $customer->save();
+        // dd($customer);
+
+      
         return redirect('/edit/'.$id)->with('success','تغییرات با موفقیت اعمال شد.');
     }
 
     public function showManage(){
-
-        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','=','0')->paginate(10);
+        
+      
+        $this->backup();
+        
+        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','=','0')->orderBy('id','DESC')->paginate(10);
         foreach ($customers as $key => $customer) {
             # code...
             switch ($customer->situation) {
@@ -142,15 +168,21 @@ class CMSController extends Controller
             if(User::find($customer->getter_id) !==null){
                 $customer->getter_name = User::find($customer->getter_id)->fullname;
             }
+            $exp = explode(" ",$customer->get_date);
+            $date = explode("-",$exp[0]);
+            $time = explode(":",$exp[1]);
+            $customer->get_date = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+    
         }
         // dd($customers);
 
-        return view('cms.manage')->with(['data'=>$customers->items(),'route' => 'manage']);
+        return view('cms.manage')->with(['data'=>$customers,'route' => 'manage']);
     }
     
     public function showArchive(){
 
-        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','>','0')->paginate(10);
+        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','>','0')->orderBy('id','DESC')->paginate(10);
+       $paginator = $customers->links();
         foreach ($customers as $key => $customer) {
             # code...
             switch ($customer->situation) {
@@ -179,8 +211,14 @@ class CMSController extends Controller
             if(User::find($customer->getter_id) !==null){
                 $customer->getter_name = User::find($customer->getter_id)->fullname;
             }
+            $exp = explode(" ",$customer->get_date);
+            $date = explode("-",$exp[0]);
+            $time = explode(":",$exp[1]);
+            $customer->get_date = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+    
         }
-        return view('cms.manage')->with(['data'=>$customers->items(),'route' => 'archive']);
+  
+        return view('cms.manage')->with(['data'=>$customers,'paginator' => $paginator,'route' => 'archive']);
     }
 
 
@@ -233,12 +271,72 @@ class CMSController extends Controller
                 $customer->situation_name = "تحویل گرفته شده";
                 break;
         }
+        $exp = explode(" ",$customer->get_date);
+        $date = explode("-",$exp[0]);
+        $time = explode(":",$exp[1]);
+        $customer->get_date_shamsi = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+
+        if(isset($customer->out_date) && $customer->out_date !== null){
+            $exp = explode(" ",$customer->out_date);
+            $date = explode("-",$exp[0]);
+            $time = explode(":",$exp[1]);
+            
+            $customer->out_date_shamsi = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+        }
+        //  dd($customer);
         return view('cms.edit')->with(['data'=>$customer,'route' => 'manage','editable' => $editable]);
     }
 
-    public function showDashboard()
+    public function showDashboard(Request $r)
     {
-        return "این صفحه فعلا در دسترس نمی باشد.";
+        // dd($r->all());
+        $r->validate([
+            'from' => 'string|max:30',
+            'to' => 'string|max:30',
+        ]);
+        if (isset($r->from) && $r->from !==null && isset($r->to) && $r->to !==null) {
+            $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id','giver_id'])->where('get_date', '>=', $r->from)
+            ->where('get_date', '<=', $r->to)->orderBy('get_date','ASC')->get();
+        }else {
+            $customers =[];
+        }
+        foreach ($customers as $key => $customer) {
+            # code...
+            switch ($customer->situation) {
+                case 0:
+                    # code...
+                    $customer->situation_name = "تحویل گرفته شده است";
+                    break;
+                case 1:
+                    # code...
+                    $customer->situation_name = "تعمیر شده است";
+                    break;
+                case 2:
+                    # code...
+                    $customer->situation_name = "تعمیر نشده است";
+                    break;
+                case 3:
+                    # code...
+                    $customer->situation_name = "در حال تعمیر";
+                    break;
+
+                default:
+                    # code...
+                    $customer->situation_name = "تحویل گرفته شده";
+                    break;
+            }
+            if(User::find($customer->getter_id) !==null){
+                $customer->getter_name = User::find($customer->getter_id)->fullname;
+            }
+            $exp = explode(" ",$customer->get_date);
+            $date = explode("-",$exp[0]);
+            $time = explode(":",$exp[1]);
+            $customer->get_date = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+            
+        }
+
+        //  dd($from);
+        return view('cms.dashboard')->with(['data'=>$customers,'route' => 'manage','from' =>$r->from ,'to' => $r->to]); 
     }
 
     public function search(Request $r)
@@ -284,6 +382,11 @@ class CMSController extends Controller
             if(User::find($customer->getter_id) !==null){
                 $customer->getter_name = User::find($customer->getter_id)->fullname;
             }
+            $exp = explode(" ",$customer->get_date);
+            $date = explode("-",$exp[0]);
+            $time = explode(":",$exp[1]);
+            $customer->get_date = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
+    
         }
         return view('cms.manage')->with(['data'=>$customers,'route' => 'manage']);
         
@@ -300,7 +403,6 @@ class CMSController extends Controller
 
             
         ]);
-        
         $customer = Customer::find($r->id);
         $customer->situation = $r->situation;
         $customer->situation_text = $r->situation_text;
@@ -322,5 +424,54 @@ class CMSController extends Controller
 
         return redirect('/manage');
         // $customer->situation
+    }
+
+    public function backup()
+    {
+        try {
+            set_time_limit(30);
+
+            define('AWS_KEY', env('AWS_KEY'));
+
+            define('AWS_SECRET_KEY', env('AWS_SECRET_KEY'));
+
+            $ENDPOINT = env('AWS_ENDPOINT');
+            $client = new S3Client([
+
+                'region' => '',
+            
+                'version' => 'latest',
+            
+                'endpoint' => $ENDPOINT,
+            
+                'credentials' => [
+            
+                    'key' => AWS_KEY,
+            
+                    'secret' => AWS_SECRET_KEY
+            
+                ],
+            
+                // Set the S3 class to use objects.dreamhost.com/bucket
+            
+                // instead of bucket.objects.dreamhost.com
+            
+                'use_path_style_endpoint' => true
+            
+            ]);
+            $bucket =  env('AWS_S3_BUCKET');
+            $keyname =  env('AWS_KEY');
+            $uploader = new MultipartUploader($client, public_path("/database/farmehr.db"), [
+                'bucket' => $bucket,
+                'key'    => $keyname
+            ]);
+            
+            // Perform the upload.
+        
+            $result = $uploader->upload();
+            // echo "Upload complete: {$result['ObjectURL']}" . PHP_EOL;
+        } catch (MultipartUploadException $e) {
+            echo $e->getMessage() . PHP_EOL;
+        }
     }
 }

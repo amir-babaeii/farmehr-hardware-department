@@ -81,11 +81,11 @@
 				</div>
 
 				<div class="flex-c p-b-112">
-					<a href="https://farmarket.ir" class="login100-social-item">
+					<a href="https://farmehr.com" class="login100-social-item">
 						<i class="fa fa-internet-explorer"></i>
 					</a>
 
-					<a href="https://farmehr.com" class="login100-social-item">
+					<a href="https://farmarket.ir" class="login100-social-item">
 						<i class="fa fa-shopping-cart " style="color: orangered"></i>
 					</a>
 				</div>
