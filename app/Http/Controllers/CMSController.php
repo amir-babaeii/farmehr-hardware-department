@@ -6,12 +6,11 @@ use Illuminate\Http\Request;
 use App\Customer;
 use DateTime;
 use App\User;
-// use App\Product;
-
 use Aws\Common\Exception\MultipartUploadException;
 use Aws\S3\MultipartUploader;
 use Aws\S3\S3Client;
 use Verta;
+use App\Backup;
 
 
 class CMSController extends Controller
@@ -23,7 +22,6 @@ class CMSController extends Controller
     } 
     public function showAdd(Request $r){
         $user = auth()->user()->fullname;
-        // $products = Product::all();
         if(Customer::latest()->first() !== null)
             $id =Customer::latest()->first()->id;
         else
@@ -138,7 +136,7 @@ class CMSController extends Controller
       
         $this->backup();
         
-        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','=','0')->orderBy('id','DESC')->paginate(10);
+        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','=','0')->orderBy('id','DESC')->paginate(15);
         foreach ($customers as $key => $customer) {
             # code...
             switch ($customer->situation) {
@@ -181,8 +179,7 @@ class CMSController extends Controller
     
     public function showArchive(){
 
-        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','>','0')->orderBy('id','DESC')->paginate(10);
-       $paginator = $customers->links();
+        $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id'])->where('giver_id','>','0')->orderBy('id','DESC')->paginate(15);
         foreach ($customers as $key => $customer) {
             # code...
             switch ($customer->situation) {
@@ -218,7 +215,7 @@ class CMSController extends Controller
     
         }
   
-        return view('cms.manage')->with(['data'=>$customers,'paginator' => $paginator,'route' => 'archive']);
+        return view('cms.manage')->with(['data'=>$customers,'route' => 'archive']);
     }
 
 
@@ -346,12 +343,13 @@ class CMSController extends Controller
         ]);
         
         if(is_numeric($r->search)){
-            if(($customer = Customer::find($r->search))->select(['id','name','type','model','get_date','situation_text','situation','getter_id','giver_id']) !== null)
+            if(($customer = Customer::find($r->search))->select(['id','name','type','model','get_date','situation_text','situation','getter_id','giver_id']) !== null){
                 $customers = [$customer];
-        
+                $single = true;
+            }
         }else{
-            if(($customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id','giver_id'])->where('name','like','%'. $r->search . '%')->paginate(10) ) !== null)
-                $customers =$customers->items();
+            $customers = Customer::select(['id','name','type','model','get_date','situation_text','situation','getter_id','giver_id'])->where('name','like','%'. $r->search . '%')->paginate(15) ; 
+            $single =false;
 
         }
         foreach ($customers as $key => $customer) {
@@ -388,7 +386,7 @@ class CMSController extends Controller
             $customer->get_date = Verta::createGregorian($date[0],$date[1],$date[2],$time[0],$time[1],$time[2]);
     
         }
-        return view('cms.manage')->with(['data'=>$customers,'route' => 'manage']);
+        return view('cms.manage')->with(['data'=>$customers,'route' => 'manage','single' =>$single]);
         
     }
 
@@ -428,7 +426,27 @@ class CMSController extends Controller
 
     public function backup()
     {
+
+        $time = time();
+        if(Backup::latest()->first() !== null){
+            $last_backup_time = Backup::latest()->first()->last_unixtimestamp;
+            
+            if(( $time - $last_backup_time ) >= 21600){
+                $new_backup =new Backup();
+                $new_backup->last_unixtimestamp =  $time;
+                $new_backup->save();
+            }else{
+                return ;
+            }
+        }else{
+            $new_backup =new Backup();
+            $new_backup->last_unixtimestamp = $time;
+            $new_backup->save();
+        }
         try {
+
+        
+
             set_time_limit(30);
 
             define('AWS_KEY', env('AWS_KEY'));
@@ -460,10 +478,31 @@ class CMSController extends Controller
             
             ]);
             $bucket =  env('AWS_S3_BUCKET');
-            $keyname =  env('AWS_KEY');
+            $results = $client->getPaginator('ListObjects', [
+                'Bucket' => $bucket
+            ]);
+            $last = $time;
+            $delete_name = "";
+            foreach ($results as $result) {
+                foreach ($result['Contents'] as $object) {
+                    
+
+                    $item_time = strtotime($object['LastModified']);
+                    if($item_time <= $last){
+                        
+                        $last = $item_time;
+                        $delete_name = $object['Key'];
+                    }
+                }
+            }
+            
+            $client->deleteObject([
+                'Bucket' => $bucket,
+                'Key'    => $delete_name
+            ]);
             $uploader = new MultipartUploader($client, public_path("/database/farmehr.db"), [
                 'bucket' => $bucket,
-                'key'    => $keyname
+                'key'    => $time
             ]);
             
             // Perform the upload.
@@ -471,7 +510,7 @@ class CMSController extends Controller
             $result = $uploader->upload();
             // echo "Upload complete: {$result['ObjectURL']}" . PHP_EOL;
         } catch (MultipartUploadException $e) {
-            echo $e->getMessage() . PHP_EOL;
+
         }
     }
 }
